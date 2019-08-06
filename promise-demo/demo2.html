@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Promise 示例</title>
+</head>
+
+<body>
+    <script>
+        function fetchAndDecode(url, type) {
+            return fetch(url).then(response => {
+                if (type === 'blob') {
+                    return response.blob();
+                } else if (type === 'text') {
+                    return response.text();
+                }
+            }).catch(e => {
+                console.log('There has been a problem with your fetch operation: ' + e.message);
+            });
+        }
+
+        let coffee = fetchAndDecode('coffee.jpg', 'blob');
+        let tea = fetchAndDecode('tea.jpg', 'blob');
+        let description = fetchAndDecode('description.txt', 'text');
+
+        Promise.all([coffee, tea, description]).then(values => {
+            console.log(values);
+            let coffeeURL = URL.createObjectURL(values[0]);
+            let teaURL = URL.createObjectURL(values[1]);
+            let descText = values[2];
+
+            let img1 = document.createElement('img');
+            let img2 = document.createElement('img');
+            img1.src = coffeeURL;
+            img2.src = teaURL;
+            document.body.appendChild(img1);
+            document.body.appendChild(img2);
+
+            let para = document.createElement('p');
+            para.textContent = descText;
+            document.body.appendChild(para);
+        });
+    </script>
+</body>
+
+</html>
