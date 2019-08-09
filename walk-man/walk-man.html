@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>动画</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <canvas class="myCanvas">
+        <p>添加恰当的反馈信息</p>
+    </canvas>
+
+    <script>
+        let canvas = document.querySelector('.myCanvas');
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+        let ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = 'black';
+        ctx.fillRect(0, 0, width, height);
+
+        // 使原点 (0, 0) 从画布左上顶点移动至画布正中心
+        // 这个功能在许多场合非常实用，我们的绘制操作都是围绕着画布的中心点展开的。
+        ctx.translate(width / 2, height / 2);
+
+        // 图中包含六个精灵，它们组成了一趟完整的行走序列。
+        // 每个精灵的尺寸为 102 × 148 像素。
+        // 为了整齐的显示一个精灵，可以通过 drawImage() 来从序列中裁切出单独的精灵并隐藏其他部分
+        // 切片的 X 坐标应为 102 的倍数，Y 坐标恒为 0。切片尺寸恒为 102 × 148 像素。
+        let img = new Image();
+        img.src = 'walk-right.png';
+
+        let sprite = 0;
+        let posX = 0;
+
+        function draw() {
+            ctx.fillRect(-(width/2), -(height/2), width, height);
+            ctx.drawImage(img, sprite*102, 0, 102, 148, posX, -74, 102, 148);
+
+            // 每13帧，动一下
+            if (posX % 13 === 0) {
+                if (sprite === 5) {
+                    sprite = 0;
+                } else {
+                    sprite++;
+                }
+            }
+
+            // 每一帧，水平位置加2
+            let newStartPos;
+            if (posX > width / 2) {
+                newStartPos = -((width / 2) + 102);
+                posX = Math.ceil(newStartPos / 13) * 13;
+                console.log(posX);
+            } else {
+                posX += 2;
+            }
+
+            requestAnimationFrame(draw);
+        }
+
+        img.addEventListener('load', draw);
+
+    </script>
+</body>
+</html>
