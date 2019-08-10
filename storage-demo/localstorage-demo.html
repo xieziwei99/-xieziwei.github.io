@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Personal greeting</title>
+    <style>
+        html {
+            font-family: sans-serif;
+        }
+
+        body {
+            margin: 0 auto;
+            max-width: 1024px;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        header,
+        footer {
+            background: cyan;
+            padding: 20px;
+            border: 1px solid black;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        form {
+            font-size: 0.8rem;
+        }
+
+        .personal-greeting {
+            font-weight: bold;
+        }
+
+        pre {
+            background-color: darkgrey;
+            font-size: 20px;
+            width: 500px;
+        }
+    </style>
+    <script src="index.js" async defer></script>
+</head>
+
+<body>
+    <header>
+        <h1>Our website</h1>
+
+        <form>
+            <div class="remember">
+                <label for="entername">Enter your name:</label>
+                <input id="entername" type="text" required>
+                <input id="submitname" type="submit" value="Say hello">
+            </div>
+            <div class="forget">
+                <label for="forgetname">Want me to forget you?</label>
+                <!-- reset 将form中所有input设为默认值 -->
+                <input id="forgetname" type="reset" value="Forget">
+            </div>
+        </form>
+    </header>
+
+    <main>
+
+        <p class="personal-greeting">Welcome to our website.</p>
+
+        <p>Web Storage API：用于存储和检索较小的、由名称和相应值组成的数据项 <br>
+        例如：
+        </p>
+
+        <pre>
+    // localStorage & sessionStorage
+    localStorage.setItem('name', 'Jack');
+    localStorage.getItem('name');
+    localStorage.removeItem('name');</pre>
+
+    </main>
+
+    <footer>
+        <p>Copyright nobody. Use the code as you like.</p>
+    </footer>
+</body>
+
+</html>
