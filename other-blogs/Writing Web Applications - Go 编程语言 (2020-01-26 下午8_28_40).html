@@ -1,0 +1,851 @@
+<!DOCTYPE html> <html><!--
+ Page saved with SingleFile 
+ url: https://go-zh.org/doc/articles/wiki/ 
+ saved date: Sun Jan 26 2020 20:28:40 GMT+0800 (中国标准时间)
+--><meta charset=utf-8>
+<title>Writing Web Applications - Go 编程语言</title>
+<style>body{margin:0;font-family:Helvetica,Arial,sans-serif;font-size:16px}pre,code{font-family:Menlo,monospace;font-size:14px}pre{line-height:18px}pre .comment{color:#060}body{color:#222}a{color:#375eab;text-decoration:none}a:hover,.exampleHeading .text:hover{text-decoration:underline}p,pre,ul{margin:20px}pre{background:#e9e9e9;padding:10px;-webkit-border-radius:5px;-moz-border-radius:5px;border-radius:5px}h1,h2{margin:20px 0;padding:0;color:#375eab;font-weight:bold}h1{font-size:24px}h2{font-size:20px;background:#e0ebf5;padding:2px 5px}dl{margin:20px}dl{font-size:14px}div#nav table td{vertical-align:top}div#heading{float:left;margin:0 0 10px 0;padding:21px 0;font-size:20px;font-weight:normal}div#heading a{color:#222;text-decoration:none}div#topbar{background:#e0ebf5;height:64px;overflow:hidden}body{text-align:center}div#page{width:100%}div#page>.container,div#topbar>.container{text-align:left;margin-left:auto;margin-right:auto;padding:0 20px}div#page.wide>.container,div#topbar.wide>.container{width:auto}div#footer{text-align:center;color:#666;font-size:14px;margin:40px 0}div#menu>a,div#menu>input{padding:10px;text-decoration:none;font-size:16px;-webkit-border-radius:5px;-moz-border-radius:5px;border-radius:5px}div#menu>a,div#menu>input{border:1px solid #375eab}div#menu>a{color:white;background:#375eab}div#menu{float:right;padding:10px 0;text-align:right}div#menu>a{margin-right:5px;margin-bottom:10px;padding:10px}div#menu>input{position:relative;top:1px;width:60px;background:white}div#menu>input.inactive{color:#999}h2{clear:right}div.play .input{padding:10px;margin-top:10px;-webkit-border-top-left-radius:5px;-webkit-border-top-right-radius:5px;-moz-border-radius-topleft:5px;-moz-border-radius-topright:5px;border-top-left-radius:5px;border-top-right-radius:5px;overflow:hidden}div.play .output{border-top:none!important;padding:10px;max-height:200px;overflow:auto;-webkit-border-bottom-right-radius:5px;-webkit-border-bottom-left-radius:5px;-moz-border-radius-bottomright:5px;-moz-border-radius-bottomleft:5px;border-bottom-right-radius:5px;border-bottom-left-radius:5px}div.play .input,div.play .output{background:#ffffd8}div.play .input,div.play .output{border:1px solid #375eab}div.play .buttons{float:right;padding:20px 0 10px 0;text-align:right}div#playground .output{height:100px}</style>
+<link type=image/x-icon rel="shortcut icon" href="data:image/vnd.microsoft.icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8AVE44//7hdv/+4Xb//uF2//7hdv/+4Xb//uF2//7hdv/+4Xb//uF2//7hdv/+4Xb//uF2/1ROOP////8A////AFROOP/+4Xb//uF2//7hdv/+4Xb//uF2//7hdv/+4Xb//uF2//7hdv/+4Xb//uF2//7hdv9UTjj/////AP///wBUTjj//uF2//7hdv/+4Xb//uF2//7hdv/+4Xb//uF2//7hdv/+4Xb//uF2//7hdv/+4Xb/VE44/////wD///8AVE44//7hdv/+4Xb//uF2//7hdv/+4Xb//uF2//7hdv/+4Xb//uF2//7hdv/+4Xb//uF2/1ROOP////8A////AFROOP/+4Xb//uF2//7hdv/+4Xb//uF2//7hdv/+4Xb//uF2//7hdv/+4Xb//uF2//7hdv9UTjj/////AP///wBUTjj//uF2//7hdv/+4Xb//uF2//7hdv/+4Xb//uF2//7hdv/+4Xb//uF2//7hdv/+4Xb/VE44/////wD///8AVE44//7hdv/+4Xb//uF2//7hdv/+4Xb/z7t5/8Kyev/+4Xb//993///dd///3Xf//uF2/1ROOP////8A////AFROOP/+4Xb//uF2//7hdv//4Hn/dIzD//v8///7/P//dIzD//7hdv//3Xf//913//7hdv9UTjj/////AP///wBUTjj//uF2///fd//+4Xb//uF2/6ajif90jMP/dIzD/46Zpv/+4Xb//+F1///feP/+4Xb/VE44/////wD///8AVE44//7hdv/z1XT////////////Is3L/HyAj/x8gI//Is3L////////////z1XT//uF2/1ROOP////8A19nd/1ROOP/+4Xb/5+HS//v+//8RExf/Liwn//7hdv/+4Xb/5+HS//v8//8RExf/Liwn//7hdv9UTjj/19nd/1ROOP94aDT/yKdO/+fh0v//////ERMX/y4sJ//+4Xb//uF2/+fh0v//////ERMX/y4sJ//Ip07/dWU3/1ROOP9UTjj/yKdO/6qSSP/Is3L/9fb7//f6///Is3L//uF2//7hdv/Is3L////////////Is3L/qpJI/8inTv9UTjj/19nd/1ROOP97c07/qpJI/8inTv/Ip07//uF2//7hdv/+4Xb//uF2/8zBlv/Kv4//pZJU/3tzTv9UTjj/19nd/////wD///8A4eLl/6CcjP97c07/e3NO/1dOMf9BOiX/TkUn/2VXLf97c07/e3NO/6CcjP/h4uX/////AP///wD///8A////AP///wD///8A////AP///wDq6/H/3N/j/9fZ3f/q6/H/////AP///wD///8A////AP///wD///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="><style>.sf-hidden{display:none!important}</style></head>
+<body>
+<div id=lowframe style="position:fixed;bottom:0px;left:0px;height:0px;width:100%;border-top:thin solid grey;background-color:white;overflow:auto;--darkreader-inline-border-top:#535250;--darkreader-inline-bgcolor:#2c2d2d" data-darkreader-inline-border-top data-darkreader-inline-bgcolor>
+...
+</div>
+<div id=topbar class=wide><div class=container>
+<form method=GET action=/search>
+<div id=menu style=min-width:650px>
+<a href=https://go-zh.org/doc/>文档</a>
+<a href=https://go-zh.org/pkg/>包</a>
+<a href=https://go-zh.org/project/>项目</a>
+<a href=https://go-zh.org/help/>帮助</a>
+<a href=https://go-zh.org/blog/>博客</a>
+<a id=playgroundButton href=http://play.golang.org/ title="显示 Go 操场" style=display:inline>运行</a>
+<input type=text id=search name=q class=inactive value=搜索 placeholder=搜索>
+</div>
+<div id=heading><a href=https://go-zh.org/>Go 编程语言</a></div>
+</form>
+</div></div>
+<div id=playground class="play sf-hidden">
+ <div class=input></div>
+ <div class=output></div>
+ <div class=buttons>
+ 
+ 
+ 
+ </div>
+</div>
+<div id=page class=wide tabindex=-1 style=outline:0px;--darkreader-inline-outline:initial data-darkreader-inline-outline>
+<div class=container>
+ <h1>Writing Web Applications</h1>
+<div id=nav><table class=unruled><tbody><tr><td class=first><dl><dt><a href=#tmp_0>Introduction</a><dt><a href=#tmp_1>Getting Started</a><dt><a href=#tmp_2>Data Structures</a><dt><a href=#tmp_3>Introducing the net/http package (an interlude)</a><dt><a href=#tmp_4>Using net/http to serve wiki pages</a><dt><a href=#tmp_5>Editing Pages</a><dt><a href=#tmp_6>The html/template package</a><dt><a href=#tmp_7>Handling non-existent pages</a><dt><a href=#tmp_8>Saving Pages</a></dl><td><dl><dt><a href=#tmp_9>Error handling</a><dt><a href=#tmp_10>Template caching</a><dt><a href=#tmp_11>Validation</a><dt><a href=#tmp_12>Introducing Function Literals and Closures</a><dt><a href=#tmp_13>Try it out!</a><dt><a href=#tmp_14>Other tasks</a></dl></table></div>
+<h2 id=tmp_0>Introduction</h2>
+<p>
+Covered in this tutorial:
+</p>
+<ul>
+<li>Creating a data structure with load and save methods</li>
+<li>Using the <code>net/http</code> package to build web applications
+<li>Using the <code>html/template</code> package to process HTML templates</li>
+<li>Using the <code>regexp</code> package to validate user input</li>
+<li>Using closures</li>
+</ul>
+<p>
+Assumed knowledge:
+</p>
+<ul>
+<li>Programming experience</li>
+<li>Understanding of basic web technologies (HTTP, HTML)</li>
+<li>Some UNIX/DOS command-line knowledge</li>
+</ul>
+<h2 id=tmp_1>Getting Started</h2>
+<p>
+At present, you need to have a FreeBSD, Linux, OS X, or Windows machine to run Go.
+We will use <code>$</code> to represent the command prompt.
+</p>
+<p>
+Install Go (see the <a href=https://go-zh.org/doc/install>Installation Instructions</a>).
+</p>
+<p>
+Make a new directory for this tutorial inside your <code>GOPATH</code> and cd to it:
+</p>
+<pre>$ mkdir gowiki
+$ cd gowiki
+</pre>
+<p>
+Create a file named <code>wiki.go</code>, open it in your favorite editor, and
+add the following lines:
+</p>
+<pre>package main
+
+import (
+	"fmt"
+	"io/ioutil"
+)
+</pre>
+<p>
+We import the <code>fmt</code> and <code>ioutil</code> packages from the Go
+standard library. Later, as we implement additional functionality, we will
+add more packages to this <code>import</code> declaration.
+</p>
+<h2 id=tmp_2>Data Structures</h2>
+<p>
+Let's start by defining the data structures. A wiki consists of a series of
+interconnected pages, each of which has a title and a body (the page content).
+Here, we define <code>Page</code> as a struct with two fields representing
+the title and body.
+</p>
+<pre>type Page struct {
+    Title string
+    Body  []byte
+}</pre>
+<p>
+The type <code>[]byte</code> means "a <code>byte</code> slice".
+(See <a href=https://go-zh.org/doc/articles/slices_usage_and_internals.html>Slices: usage and
+internals</a> for more on slices.)
+The <code>Body</code> element is a <code>[]byte</code> rather than
+<code>string</code> because that is the type expected by the <code>io</code>
+libraries we will use, as you'll see below.
+</p>
+<p>
+The <code>Page</code> struct describes how page data will be stored in memory.
+But what about persistent storage? We can address that by creating a
+<code>save</code> method on <code>Page</code>:
+</p>
+<pre>func (p *Page) save() error {
+    filename := p.Title + ".txt"
+    return ioutil.WriteFile(filename, p.Body, 0600)
+}</pre>
+<p>
+This method's signature reads: "This is a method named <code>save</code> that
+takes as its receiver <code>p</code>, a pointer to <code>Page</code> . It takes
+no parameters, and returns a value of type <code>error</code>."
+</p>
+<p>
+This method will save the <code>Page</code>'s <code>Body</code> to a text
+file. For simplicity, we will use the <code>Title</code> as the file name.
+</p>
+<p>
+The <code>save</code> method returns an <code>error</code> value because
+that is the return type of <code>WriteFile</code> (a standard library function
+that writes a byte slice to a file). The <code>save</code> method returns the
+error value, to let the application handle it should anything go wrong while
+writing the file. If all goes well, <code>Page.save()</code> will return
+<code>nil</code> (the zero-value for pointers, interfaces, and some other
+types).
+</p>
+<p>
+The octal integer literal <code>0600</code>, passed as the third parameter to
+<code>WriteFile</code>, indicates that the file should be created with
+read-write permissions for the current user only. (See the Unix man page
+<code>open(2)</code> for details.)
+</p>
+<p>
+In addition to saving pages, we will want to load pages, too:
+</p>
+<pre>func loadPage(title string) *Page {
+    filename := title + ".txt"
+    body, _ := ioutil.ReadFile(filename)
+    return &amp;Page{Title: title, Body: body}
+}</pre>
+<p>
+The function <code>loadPage</code> constructs the file name from the title
+parameter, reads the file's contents into a new variable <code>body</code>, and
+returns a pointer to a <code>Page</code> literal constructed with the proper
+title and body values.
+</p>
+<p>
+Functions can return multiple values. The standard library function
+<code>io.ReadFile</code> returns <code>[]byte</code> and <code>error</code>.
+In <code>loadPage</code>, error isn't being handled yet; the "blank identifier"
+represented by the underscore (<code>_</code>) symbol is used to throw away the
+error return value (in essence, assigning the value to nothing).
+</p>
+<p>
+But what happens if <code>ReadFile</code> encounters an error? For example,
+the file might not exist. We should not ignore such errors. Let's modify the
+function to return <code>*Page</code> and <code>error</code>.
+</p>
+<pre>func loadPage(title string) (*Page, error) {
+    filename := title + ".txt"
+    body, err := ioutil.ReadFile(filename)
+    if err != nil {
+        return nil, err
+    }
+    return &amp;Page{Title: title, Body: body}, nil
+}</pre>
+<p>
+Callers of this function can now check the second parameter; if it is
+<code>nil</code> then it has successfully loaded a Page. If not, it will be an
+<code>error</code> that can be handled by the caller (see the
+<a href=https://go-zh.org/ref/spec#Errors>language specification</a> for details).
+</p>
+<p>
+At this point we have a simple data structure and the ability to save to and
+load from a file. Let's write a <code>main</code> function to test what we've
+written:
+</p>
+<pre>func main() {
+    p1 := &amp;Page{Title: "TestPage", Body: []byte("This is a sample Page.")}
+    p1.save()
+    p2, _ := loadPage("TestPage")
+    fmt.Println(string(p2.Body))
+}</pre>
+<p>
+After compiling and executing this code, a file named <code>TestPage.txt</code>
+would be created, containing the contents of <code>p1</code>. The file would
+then be read into the struct <code>p2</code>, and its <code>Body</code> element
+printed to the screen.
+</p>
+<p>
+You can compile and run the program like this:
+</p>
+<pre>$ go build wiki.go
+$ ./wiki
+This is a sample page.
+</pre>
+<p>
+(If you're using Windows you must type "<code>wiki</code>" without the
+"<code>./</code>" to run the program.)
+</p>
+<p>
+<a href=https://go-zh.org/doc/articles/wiki/part1.go>Click here to view the code we've written so far.</a>
+</p>
+<h2 id=tmp_3>Introducing the <code>net/http</code> package (an interlude)</h2>
+<p>
+Here's a full working example of a simple web server:
+</p>
+<pre>package main
+
+import (
+    "fmt"
+    "net/http"
+)
+
+func handler(w http.ResponseWriter, r *http.Request) {
+    fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
+}
+
+func main() {
+    http.HandleFunc("/", handler)
+    http.ListenAndServe(":8080", nil)
+}</pre>
+<p>
+The <code>main</code> function begins with a call to
+<code>http.HandleFunc</code>, which tells the <code>http</code> package to
+handle all requests to the web root (<code>"/"</code>) with
+<code>handler</code>.
+</p>
+<p>
+It then calls <code>http.ListenAndServe</code>, specifying that it should
+listen on port 8080 on any interface (<code>":8080"</code>). (Don't
+worry about its second parameter, <code>nil</code>, for now.)
+This function will block until the program is terminated.
+</p>
+<p>
+The function <code>handler</code> is of the type <code>http.HandlerFunc</code>.
+It takes an <code>http.ResponseWriter</code> and an <code>http.Request</code> as
+its arguments.
+</p>
+<p>
+An <code>http.ResponseWriter</code> value assembles the HTTP server's response; by writing
+to it, we send data to the HTTP client.
+</p>
+<p>
+An <code>http.Request</code> is a data structure that represents the client
+HTTP request. <code>r.URL.Path</code> is the path component
+of the request URL. The trailing <code>[1:]</code> means
+"create a sub-slice of <code>Path</code> from the 1st character to the end."
+This drops the leading "/" from the path name.
+</p>
+<p>
+If you run this program and access the URL:
+</p>
+<pre>http://localhost:8080/monkeys</pre>
+<p>
+the program would present a page containing:
+</p>
+<pre>Hi there, I love monkeys!</pre>
+<h2 id=tmp_4>Using <code>net/http</code> to serve wiki pages</h2>
+<p>
+To use the <code>net/http</code> package, it must be imported:
+</p>
+<pre>import (
+	"fmt"
+	"io/ioutil"
+	<b>"net/http"</b>
+)
+</pre>
+<p>
+Let's create a handler, <code>viewHandler</code> that will allow users to
+view a wiki page. It will handle URLs prefixed with "/view/".
+</p>
+<pre>func viewHandler(w http.ResponseWriter, r *http.Request) {
+    title := r.URL.Path[len("/view/"):]
+    p, _ := loadPage(title)
+    fmt.Fprintf(w, "&lt;h1&gt;%s&lt;/h1&gt;&lt;div&gt;%s&lt;/div&gt;", p.Title, p.Body)
+}</pre>
+<p>
+First, this function extracts the page title from <code>r.URL.Path</code>,
+the path component of the request URL.
+The <code>Path</code> is re-sliced with <code>[len("/view/"):]</code> to drop
+the leading <code>"/view/"</code> component of the request path.
+This is because the path will invariably begin with <code>"/view/"</code>,
+which is not part of the page's title.
+</p>
+<p>
+The function then loads the page data, formats the page with a string of simple
+HTML, and writes it to <code>w</code>, the <code>http.ResponseWriter</code>.
+</p>
+<p>
+Again, note the use of <code>_</code> to ignore the <code>error</code>
+return value from <code>loadPage</code>. This is done here for simplicity
+and generally considered bad practice. We will attend to this later.
+</p>
+<p>
+To use this handler, we rewrite our <code>main</code> function to
+initialize <code>http</code> using the <code>viewHandler</code> to handle
+any requests under the path <code>/view/</code>.
+</p>
+<pre>func main() {
+    http.HandleFunc("/view/", viewHandler)
+    http.ListenAndServe(":8080", nil)
+}</pre>
+<p>
+<a href=https://go-zh.org/doc/articles/wiki/part2.go>Click here to view the code we've written so far.</a>
+</p>
+<p>
+Let's create some page data (as <code>test.txt</code>), compile our code, and
+try serving a wiki page.
+</p>
+<p>
+Open <code>test.txt</code> file in your editor, and save the string "Hello world" (without quotes)
+in it.
+</p>
+<pre>$ go build wiki.go
+$ ./wiki
+</pre>
+<p>
+(If you're using Windows you must type "<code>wiki</code>" without the
+"<code>./</code>" to run the program.)
+</p>
+<p>
+With this web server running, a visit to <code><a href=http://localhost:8080/view/test>http://localhost:8080/view/test</a></code>
+should show a page titled "test" containing the words "Hello world".
+</p>
+<h2 id=tmp_5>Editing Pages</h2>
+<p>
+A wiki is not a wiki without the ability to edit pages. Let's create two new
+handlers: one named <code>editHandler</code> to display an 'edit page' form,
+and the other named <code>saveHandler</code> to save the data entered via the
+form.
+</p>
+<p>
+First, we add them to <code>main()</code>:
+</p>
+<pre>func main() {
+    http.HandleFunc("/view/", viewHandler)
+    http.HandleFunc("/edit/", editHandler)
+    http.HandleFunc("/save/", saveHandler)
+    http.ListenAndServe(":8080", nil)
+}</pre>
+<p>
+The function <code>editHandler</code> loads the page
+(or, if it doesn't exist, create an empty <code>Page</code> struct),
+and displays an HTML form.
+</p>
+<pre>func editHandler(w http.ResponseWriter, r *http.Request) {
+    title := r.URL.Path[len("/edit/"):]
+    p, err := loadPage(title)
+    if err != nil {
+        p = &amp;Page{Title: title}
+    }
+    fmt.Fprintf(w, "&lt;h1&gt;Editing %s&lt;/h1&gt;"+
+        "&lt;form action=\"/save/%s\" method=\"POST\"&gt;"+
+        "&lt;textarea name=\"body\"&gt;%s&lt;/textarea&gt;&lt;br&gt;"+
+        "&lt;input type=\"submit\" value=\"Save\"&gt;"+
+        "&lt;/form&gt;",
+        p.Title, p.Title, p.Body)
+}</pre>
+<p>
+This function will work fine, but all that hard-coded HTML is ugly.
+Of course, there is a better way.
+</p>
+<h2 id=tmp_6>The <code>html/template</code> package</h2>
+<p>
+The <code>html/template</code> package is part of the Go standard library.
+We can use <code>html/template</code> to keep the HTML in a separate file,
+allowing us to change the layout of our edit page without modifying the
+underlying Go code.
+</p>
+<p>
+First, we must add <code>html/template</code> to the list of imports. We
+also won't be using <code>fmt</code> anymore, so we have to remove that.
+</p>
+<pre>import (
+	<b>"html/template"</b>
+	"io/ioutil"
+	"net/http"
+)
+</pre>
+<p>
+Let's create a template file containing the HTML form.
+Open a new file named <code>edit.html</code>, and add the following lines:
+</p>
+<pre>&lt;h1&gt;Editing {{.Title}}&lt;/h1&gt;
+
+&lt;form action="/save/{{.Title}}" method="POST"&gt;
+&lt;div&gt;&lt;textarea name="body" rows="20" cols="80"&gt;{{printf "%s" .Body}}&lt;/textarea&gt;&lt;/div&gt;
+&lt;div&gt;&lt;input type="submit" value="Save"&gt;&lt;/div&gt;
+&lt;/form&gt;</pre>
+<p>
+Modify <code>editHandler</code> to use the template, instead of the hard-coded
+HTML:
+</p>
+<pre>func editHandler(w http.ResponseWriter, r *http.Request) {
+    title := r.URL.Path[len("/edit/"):]
+    p, err := loadPage(title)
+    if err != nil {
+        p = &amp;Page{Title: title}
+    }
+    t, _ := template.ParseFiles("edit.html")
+    t.Execute(w, p)
+}</pre>
+<p>
+The function <code>template.ParseFiles</code> will read the contents of
+<code>edit.html</code> and return a <code>*template.Template</code>.
+</p>
+<p>
+The method <code>t.Execute</code> executes the template, writing the
+generated HTML to the <code>http.ResponseWriter</code>.
+The <code>.Title</code> and <code>.Body</code> dotted identifiers refer to
+<code>p.Title</code> and <code>p.Body</code>.
+</p>
+<p>
+Template directives are enclosed in double curly braces.
+The <code>printf "%s" .Body</code> instruction is a function call
+that outputs <code>.Body</code> as a string instead of a stream of bytes,
+the same as a call to <code>fmt.Printf</code>.
+The <code>html/template</code> package helps guarantee that only safe and
+correct-looking HTML is generated by template actions. For instance, it
+automatically escapes any greater than sign (<code>&gt;</code>), replacing it
+with <code>&amp;gt;</code>, to make sure user data does not corrupt the form
+HTML.
+</p>
+<p>
+Since we're working with templates now, let's create a template for our
+<code>viewHandler</code> called <code>view.html</code>:
+</p>
+<pre>&lt;h1&gt;{{.Title}}&lt;/h1&gt;
+
+&lt;p&gt;[&lt;a href="/edit/{{.Title}}"&gt;edit&lt;/a&gt;]&lt;/p&gt;
+
+&lt;div&gt;{{printf "%s" .Body}}&lt;/div&gt;</pre>
+<p>
+Modify <code>viewHandler</code> accordingly:
+</p>
+<pre>func viewHandler(w http.ResponseWriter, r *http.Request) {
+    title := r.URL.Path[len("/view/"):]
+    p, _ := loadPage(title)
+    t, _ := template.ParseFiles("view.html")
+    t.Execute(w, p)
+}</pre>
+<p>
+Notice that we've used almost exactly the same templating code in both
+handlers. Let's remove this duplication by moving the templating code
+to its own function:
+</p>
+<pre>func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
+    t, _ := template.ParseFiles(tmpl + ".html")
+    t.Execute(w, p)
+}</pre>
+<p>
+And modify the handlers to use that function:
+</p>
+<pre>func viewHandler(w http.ResponseWriter, r *http.Request) {
+    title := r.URL.Path[len("/view/"):]
+    p, _ := loadPage(title)
+    renderTemplate(w, "view", p)
+}</pre>
+<pre>func editHandler(w http.ResponseWriter, r *http.Request) {
+    title := r.URL.Path[len("/edit/"):]
+    p, err := loadPage(title)
+    if err != nil {
+        p = &amp;Page{Title: title}
+    }
+    renderTemplate(w, "edit", p)
+}</pre>
+<p>
+If we comment out the registration of our unimplemented save handler in
+<code>main</code>, we can once again build and test our program.
+<a href=https://go-zh.org/doc/articles/wiki/part3.go>Click here to view the code we've written so far.</a>
+</p>
+<h2 id=tmp_7>Handling non-existent pages</h2>
+<p>
+What if you visit <a href=http://localhost:8080/view/APageThatDoesntExist>
+<code>/view/APageThatDoesntExist</code></a>? You'll see a page containing
+HTML. This is because it ignores the error return value from
+<code>loadPage</code> and continues to try and fill out the template
+with no data. Instead, if the requested Page doesn't exist, it should
+redirect the client to the edit Page so the content may be created:
+</p>
+<pre>func viewHandler(w http.ResponseWriter, r *http.Request) {
+    title := r.URL.Path[len("/view/"):]
+    p, err := loadPage(title)
+    if err != nil {
+        http.Redirect(w, r, "/edit/"+title, http.StatusFound)
+        return
+    }
+    renderTemplate(w, "view", p)
+}</pre>
+<p>
+The <code>http.Redirect</code> function adds an HTTP status code of
+<code>http.StatusFound</code> (302) and a <code>Location</code>
+header to the HTTP response.
+</p>
+<h2 id=tmp_8>Saving Pages</h2>
+<p>
+The function <code>saveHandler</code> will handle the submission of forms
+located on the edit pages. After uncommenting the related line in
+<code>main</code>, let's implement the handler:
+</p>
+<pre>func saveHandler(w http.ResponseWriter, r *http.Request) {
+    title := r.URL.Path[len("/save/"):]
+    body := r.FormValue("body")
+    p := &amp;Page{Title: title, Body: []byte(body)}
+    p.save()
+    http.Redirect(w, r, "/view/"+title, http.StatusFound)
+}</pre>
+<p>
+The page title (provided in the URL) and the form's only field,
+<code>Body</code>, are stored in a new <code>Page</code>.
+The <code>save()</code> method is then called to write the data to a file,
+and the client is redirected to the <code>/view/</code> page.
+</p>
+<p>
+The value returned by <code>FormValue</code> is of type <code>string</code>.
+We must convert that value to <code>[]byte</code> before it will fit into
+the <code>Page</code> struct. We use <code>[]byte(body)</code> to perform
+the conversion.
+</p>
+<h2 id=tmp_9>Error handling</h2>
+<p>
+There are several places in our program where errors are being ignored. This
+is bad practice, not least because when an error does occur the program will
+have unintended behavior. A better solution is to handle the errors and return
+an error message to the user. That way if something does go wrong, the server
+will function exactly how we want and the user can be notified.
+</p>
+<p>
+First, let's handle the errors in <code>renderTemplate</code>:
+</p>
+<pre>func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
+    t, err := template.ParseFiles(tmpl + ".html")
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    err = t.Execute(w, p)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+    }
+}</pre>
+<p>
+The <code>http.Error</code> function sends a specified HTTP response code
+(in this case "Internal Server Error") and error message.
+Already the decision to put this in a separate function is paying off.
+</p>
+<p>
+Now let's fix up <code>saveHandler</code>:
+</p>
+<pre>func saveHandler(w http.ResponseWriter, r *http.Request) {
+    title := r.URL.Path[len("/save/"):]
+    body := r.FormValue("body")
+    p := &amp;Page{Title: title, Body: []byte(body)}
+    err := p.save()
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    http.Redirect(w, r, "/view/"+title, http.StatusFound)
+}</pre>
+<p>
+Any errors that occur during <code>p.save()</code> will be reported
+to the user.
+</p>
+<h2 id=tmp_10>Template caching</h2>
+<p>
+There is an inefficiency in this code: <code>renderTemplate</code> calls
+<code>ParseFiles</code> every time a page is rendered.
+A better approach would be to call <code>ParseFiles</code> once at program
+initialization, parsing all templates into a single <code>*Template</code>.
+Then we can use the
+<a href=https://go-zh.org/pkg/html/template/#Template.ExecuteTemplate><code>ExecuteTemplate</code></a>
+method to render a specific template.
+</p>
+<p>
+First we create a global variable named <code>templates</code>, and initialize
+it with <code>ParseFiles</code>.
+</p>
+<pre>var templates = template.Must(template.ParseFiles("edit.html", "view.html"))</pre>
+<p>
+The function <code>template.Must</code> is a convenience wrapper that panics
+when passed a non-nil <code>error</code> value, and otherwise returns the
+<code>*Template</code> unaltered. A panic is appropriate here; if the templates
+can't be loaded the only sensible thing to do is exit the program.
+</p>
+<p>
+The <code>ParseFiles</code> function takes any number of string arguments that
+identify our template files, and parses those files into templates that are
+named after the base file name. If we were to add more templates to our
+program, we would add their names to the <code>ParseFiles</code> call's
+arguments.
+</p>
+<p>
+We then modify the <code>renderTemplate</code> function to call the
+<code>templates.ExecuteTemplate</code> method with the name of the appropriate
+template:
+</p>
+<pre>func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
+    err := templates.ExecuteTemplate(w, tmpl+".html", p)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+    }
+}</pre>
+<p>
+Note that the template name is the template file name, so we must
+append <code>".html"</code> to the <code>tmpl</code> argument.
+</p>
+<h2 id=tmp_11>Validation</h2>
+<p>
+As you may have observed, this program has a serious security flaw: a user
+can supply an arbitrary path to be read/written on the server. To mitigate
+this, we can write a function to validate the title with a regular expression.
+</p>
+<p>
+First, add <code>"regexp"</code> to the <code>import</code> list.
+Then we can create a global variable to store our validation 
+expression:
+</p>
+<pre>var validPath = regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$")</pre>
+<p>
+The function <code>regexp.MustCompile</code> will parse and compile the
+regular expression, and return a <code>regexp.Regexp</code>.
+<code>MustCompile</code> is distinct from <code>Compile</code> in that it will
+panic if the expression compilation fails, while <code>Compile</code> returns
+an <code>error</code> as a second parameter.
+</p>
+<p>
+Now, let's write a function that uses the <code>validPath</code>
+expression to validate path and extract the page title:
+</p>
+<pre>func getTitle(w http.ResponseWriter, r *http.Request) (string, error) {
+    m := validPath.FindStringSubmatch(r.URL.Path)
+    if m == nil {
+        http.NotFound(w, r)
+        return "", errors.New("Invalid Page Title")
+    }
+    return m[2], nil <span class=comment>// The title is the second subexpression.</span>
+}</pre>
+<p>
+If the title is valid, it will be returned along with a <code>nil</code>
+error value. If the title is invalid, the function will write a
+"404 Not Found" error to the HTTP connection, and return an error to the
+handler. To create a new error, we have to import the <code>errors</code>
+package.
+</p>
+<p>
+Let's put a call to <code>getTitle</code> in each of the handlers:
+</p>
+<pre>func viewHandler(w http.ResponseWriter, r *http.Request) {
+    title, err := getTitle(w, r)
+    if err != nil {
+        return
+    }
+    p, err := loadPage(title)
+    if err != nil {
+        http.Redirect(w, r, "/edit/"+title, http.StatusFound)
+        return
+    }
+    renderTemplate(w, "view", p)
+}</pre>
+<pre>func editHandler(w http.ResponseWriter, r *http.Request) {
+    title, err := getTitle(w, r)
+    if err != nil {
+        return
+    }
+    p, err := loadPage(title)
+    if err != nil {
+        p = &amp;Page{Title: title}
+    }
+    renderTemplate(w, "edit", p)
+}</pre>
+<pre>func saveHandler(w http.ResponseWriter, r *http.Request) {
+    title, err := getTitle(w, r)
+    if err != nil {
+        return
+    }
+    body := r.FormValue("body")
+    p := &amp;Page{Title: title, Body: []byte(body)}
+    err = p.save()
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    http.Redirect(w, r, "/view/"+title, http.StatusFound)
+}</pre>
+<h2 id=tmp_12>Introducing Function Literals and Closures</h2>
+<p>
+Catching the error condition in each handler introduces a lot of repeated code.
+What if we could wrap each of the handlers in a function that does this
+validation and error checking? Go's
+<a href=https://go-zh.org/ref/spec#Function_literals>function
+literals</a> provide a powerful means of abstracting functionality
+that can help us here.
+</p>
+<p>
+First, we re-write the function definition of each of the handlers to accept
+a title string:
+</p>
+<pre>func viewHandler(w http.ResponseWriter, r *http.Request, title string)
+func editHandler(w http.ResponseWriter, r *http.Request, title string)
+func saveHandler(w http.ResponseWriter, r *http.Request, title string)
+</pre>
+<p>
+Now let's define a wrapper function that <i>takes a function of the above
+type</i>, and returns a function of type <code>http.HandlerFunc</code>
+(suitable to be passed to the function <code>http.HandleFunc</code>):
+</p>
+<pre>func makeHandler(fn func (http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Here we will extract the page title from the Request,
+		// and call the provided handler 'fn'
+	}
+}
+</pre>
+<p>
+The returned function is called a closure because it encloses values defined
+outside of it. In this case, the variable <code>fn</code> (the single argument
+to <code>makeHandler</code>) is enclosed by the closure. The variable
+<code>fn</code> will be one of our save, edit, or view handlers.
+</p>
+<p>
+Now we can take the code from <code>getTitle</code> and use it here
+(with some minor modifications):
+</p>
+<pre>func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        m := validPath.FindStringSubmatch(r.URL.Path)
+        if m == nil {
+            http.NotFound(w, r)
+            return
+        }
+        fn(w, r, m[2])
+    }
+}</pre>
+<p>
+The closure returned by <code>makeHandler</code> is a function that takes
+an <code>http.ResponseWriter</code> and <code>http.Request</code> (in other
+words, an <code>http.HandlerFunc</code>).
+The closure extracts the <code>title</code> from the request path, and
+validates it with the <code>TitleValidator</code> regexp. If the
+<code>title</code> is invalid, an error will be written to the
+<code>ResponseWriter</code> using the <code>http.NotFound</code> function.
+If the <code>title</code> is valid, the enclosed handler function
+<code>fn</code> will be called with the <code>ResponseWriter</code>,
+<code>Request</code>, and <code>title</code> as arguments.
+</p>
+<p>
+Now we can wrap the handler functions with <code>makeHandler</code> in
+<code>main</code>, before they are registered with the <code>http</code>
+package:
+</p>
+<pre>func main() {
+    flag.Parse()
+    http.HandleFunc("/view/", makeHandler(viewHandler))
+    http.HandleFunc("/edit/", makeHandler(editHandler))
+    http.HandleFunc("/save/", makeHandler(saveHandler))
+
+    if *addr {
+        l, err := net.Listen("tcp", "127.0.0.1:0")
+        if err != nil {
+            log.Fatal(err)
+        }
+        err = ioutil.WriteFile("final-port.txt", []byte(l.Addr().String()), 0644)
+        if err != nil {
+            log.Fatal(err)
+        }
+        s := &amp;http.Server{}
+        s.Serve(l)
+        return
+    }
+
+    http.ListenAndServe(":8080", nil)
+}</pre>
+<p>
+Finally we remove the calls to <code>getTitle</code> from the handler functions,
+making them much simpler:
+</p>
+<pre>func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
+    p, err := loadPage(title)
+    if err != nil {
+        http.Redirect(w, r, "/edit/"+title, http.StatusFound)
+        return
+    }
+    renderTemplate(w, "view", p)
+}</pre>
+<pre>func editHandler(w http.ResponseWriter, r *http.Request, title string) {
+    p, err := loadPage(title)
+    if err != nil {
+        p = &amp;Page{Title: title}
+    }
+    renderTemplate(w, "edit", p)
+}</pre>
+<pre>func saveHandler(w http.ResponseWriter, r *http.Request, title string) {
+    body := r.FormValue("body")
+    p := &amp;Page{Title: title, Body: []byte(body)}
+    err := p.save()
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    http.Redirect(w, r, "/view/"+title, http.StatusFound)
+}</pre>
+<h2 id=tmp_13>Try it out!</h2>
+<p>
+<a href=https://go-zh.org/doc/articles/wiki/final.go>Click here to view the final code listing.</a>
+</p>
+<p>
+Recompile the code, and run the app:
+</p>
+<pre>$ go build wiki.go
+$ ./wiki
+</pre>
+<p>
+Visiting <a href=http://localhost:8080/view/ANewPage>http://localhost:8080/view/ANewPage</a>
+should present you with the page edit form. You should then be able to
+enter some text, click 'Save', and be redirected to the newly created page.
+</p>
+<h2 id=tmp_14>Other tasks</h2>
+<p>
+Here are some simple tasks you might want to tackle on your own:
+</p>
+<ul>
+<li>Store templates in <code>tmpl/</code> and page data in <code>data/</code>.
+<li>Add a handler to make the web root redirect to
+ <code>/view/FrontPage</code>.</li>
+<li>Spruce up the page templates by making them valid HTML and adding some
+ CSS rules.</li>
+<li>Implement inter-page linking by converting instances of
+ <code>[PageName]</code> to <br>
+ <code>&lt;a href="/view/PageName"&gt;PageName&lt;/a&gt;</code>.
+ (hint: you could use <code>regexp.ReplaceAllFunc</code> to do this)
+ </li>
+</ul>
+<div id=footer>
+构建版本 devel +f22911f Thu Apr 16 05:55:22 2015 +0000.<br>
+除<a href=http://code.google.com/policies.html#restrictions>特别注明</a>外，
+本页内容均采用知识共享-署名（CC-BY）3.0协议授权，代码采用<a href=https://go-zh.org/LICENSE>BSD协议</a>授权。<br>
+<a href=https://go-zh.org/doc/tos.html>服务条款</a> |
+<a href=http://www.google.com/intl/en/policies/privacy/>隐私政策</a>
+</div>
+</div>
+</div>
